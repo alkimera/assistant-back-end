@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from .routes import init_routes
 import os
 
 load_dotenv()
@@ -16,6 +17,8 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    init_routes(app)
+    
 
     with app.app_context():
         from .models import menu 

@@ -9,3 +9,5 @@ response = requests.post(url, json=data)
 if response.status_code == 200:
     print("Requisição bem-sucedida!")
     print(response.text)
+else:
+    print(response.text)
