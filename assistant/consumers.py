@@ -4,12 +4,8 @@ from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from .models import Carrinho, Comida
 
-
-from .models import Comida
-
 class CartConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        print("Tentativa de conexão")
         query_string = parse_qs(self.scope['query_string'].decode())
         self.token = query_string.get('token', [None])[0]
         if self.token:
@@ -22,12 +18,10 @@ class CartConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print('recebemos alguma coisa')
         print(text_data_json)
         action = text_data_json['action']
         
         if action == 'add':
-            print('entrou no add')
             await self.add_to_cart(text_data_json['comida_id'], text_data_json.get('quantidade', 1))
             await self.send(text_data=json.dumps({'status': 'item adicionado'}))
             
@@ -42,11 +36,8 @@ class CartConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def add_to_cart(self, comida_id, quantidade):
-        print('chamou a função add_to_cart')
         comida, _ = Comida.objects.get_or_create(id=comida_id)
-        print('comida localizada ou criada')
         carrinho, created = Carrinho.objects.get_or_create(token=self.token, comida=comida)
-        print('carrinho localizado ou criado')
         if not created:
             carrinho.quantidade += quantidade
             carrinho.save()
