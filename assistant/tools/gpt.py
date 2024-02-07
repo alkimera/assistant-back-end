@@ -5,8 +5,8 @@ import time
 class GPT:
     def __init__(self) -> None:
         self.client = OpenAI(api_key=gpt_key)
-        self.assistant_id = 'asst_HoVGULUxDroynUBGVzhF1Dry'
-        
+        self.assistant_id = 'asst_UrIDUN3nQaQPvD52nm1WNN3y'
+             
     def retrive_assistant(self):
         return self.client.beta.assistants.retrieve(self.assistant_id)
     
