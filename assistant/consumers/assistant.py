@@ -1,10 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from urllib.parse import parse_qs
+from assistant.tools import OpenAIAssistantClient
 
 
 class AssistantConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print('tentando')
         query_string = parse_qs(self.scope['query_string'].decode())
         api_key = query_string.get('api_key', [None])[0]
         
@@ -17,9 +19,10 @@ class AssistantConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
+        client = OpenAIAssistantClient()
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-
+        message = client.create_thread_and_run_assistant(text_data_json['message'])
+        
         await self.send(text_data=json.dumps({
             'message': message
         }))
