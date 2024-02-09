@@ -1,11 +1,15 @@
 from openai import OpenAI
 from assistant.env import gpt_key, assistant_id
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class OpenAIAssistantClient:
   def __init__(self):
-    self.client = OpenAI(api_key=gpt_key)
-    self.assistant_id = assistant_id
+    self.client = OpenAI(api_key=os.getenv('GPT_KEY'))
+    self.assistant_id = os.getenv('OPENAI_ASSISTANT_ID')
 
   def create_thread_and_run_assistant(self, user_message, timeout=90):
     attempt_count = 0
@@ -54,6 +58,4 @@ class OpenAIAssistantClient:
   def retrieve_messages(self, thread_id):
     messages = self.client.beta.threads.messages.list(thread_id=thread_id)
     assistant_messages = [msg for msg in messages.data if msg.role == 'assistant']
-    result_message = assistant_messages[0].content[0].text.value if assistant_messages else None
-    result = {'message': result_message}
-    return result
+    return assistant_messages[0].content[0].text.value if assistant_messages else None
